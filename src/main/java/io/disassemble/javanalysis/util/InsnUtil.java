@@ -166,7 +166,7 @@ public class InsnUtil {
             data = ("defaultIndex = " + table.defaultIndex() + ", keys = " + Arrays.toString(table.keys()) +
                     ", indices = " + Arrays.toString(table.indices()));
         }
-        String output = insn.index() + ": " + insn.opname();
+        String output = insn.opname();
         if (!label.isEmpty()) {
             output += (" (" + label + ": " + data + ")");
         }
