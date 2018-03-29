@@ -21,6 +21,7 @@
         </repository>
     </repositories>
 
+
     <dependencies>
         <dependency>
             <groupId>org.javassist</groupId>

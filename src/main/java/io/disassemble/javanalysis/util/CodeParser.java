@@ -35,8 +35,8 @@ public class CodeParser {
                     poolIndex = (wide ? itr.u16bitAt(poolIndex) : itr.byteAt(poolIndex));
                     insn = new LdcInsn(method, index, opcode, poolIndex);
                 } else if (InsnUtil.isIntInsn(opcode)) {
-                    boolean s32 = (opcode == SIPUSH);
-                    int operand = (s32 ? itr.s32bitAt(poolIndex) : itr.byteAt(poolIndex));
+                    boolean s16 = (opcode == SIPUSH);
+                    int operand = (s16 ? itr.s16bitAt(poolIndex) : itr.byteAt(poolIndex));
                     insn = new IntInsn(method, index, opcode, operand);
                 } else if (InsnUtil.isVarInsn(opcode)) {
                     int var = (InsnUtil.isUnderscoreInsn(opcode) ? InsnUtil.underVal(opcode) : itr.byteAt(poolIndex));
