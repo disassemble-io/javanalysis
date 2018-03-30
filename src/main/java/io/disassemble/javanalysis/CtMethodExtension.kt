@@ -82,16 +82,16 @@ fun CtMethod.index(insnIndex: Int, position: Int) {
     indices[insnIndex] = position
 }
 
-fun CtMethod.indexOf(insn: CtInsn): Int {
+fun CtMethod.indexOf(insn: CtInsn): Int? {
     return normalizeIndex(insn.index())
 }
 
-fun CtMethod.normalizeIndex(index: Int): Int {
+fun CtMethod.normalizeIndex(index: Int): Int? {
     return if (index in indices) {
         indices[index]
     } else {
         indices[index - 1]
-    } ?: error("Unable to normalize index: $index")
+    }
 }
 
 fun CtMethod.hasIndex(index: Int): Boolean {

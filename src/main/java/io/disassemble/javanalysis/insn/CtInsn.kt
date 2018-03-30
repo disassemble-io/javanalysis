@@ -42,7 +42,7 @@ open class CtInsn(
         return line() - owner.line
     }
 
-    fun position(): Int {
+    fun position(): Int? {
         return owner.indexOf(this)
     }
 

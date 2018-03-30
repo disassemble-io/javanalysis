@@ -74,7 +74,7 @@ class FlowBlock(val method: CtMethod, val source: ControlFlow.Block) {
         val start = method.normalizeIndex(startIndex)
         val end = method.normalizeIndex(endIndex)
         val offset = if (method.hasIndex(endIndex)) 0 else 1 // this occurs on the end source
-        this.instructions.addAll(instructions.subList(start, end + offset))
+        this.instructions.addAll(instructions.subList(start!!, end!! + offset))
     }
 
     private fun constructExits(cfg: ControlFlowGraph): List<FlowBlock?> {
