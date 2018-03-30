@@ -29,7 +29,7 @@ open class CtInsn(val owner: CtMethod, val index: Int, val opcode: Int) {
     val position: Int
         get() = owner.indexOf(this)
 
-    val CtInsn.verbose: String
+    val verbose: String
         get() = InsnUtil.stringify(this)
 
     fun hasPrevious(): Boolean = previous.get() != null
