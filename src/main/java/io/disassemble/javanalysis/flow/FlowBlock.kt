@@ -46,7 +46,6 @@ class FlowBlock(val method: CtMethod, val source: ControlFlow.Block) {
     val incomingIndices: IntArray
         get() {
             incomingEdges?.let { incoming ->
-
                 val indices = IntArray(incoming.size)
                 for (i in indices.indices) {
                     // TODO: should -1 be the default?

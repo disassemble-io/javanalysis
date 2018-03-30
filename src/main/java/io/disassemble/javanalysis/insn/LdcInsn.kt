@@ -1,6 +1,7 @@
 package io.disassemble.javanalysis.insn
 
-import io.disassemble.javanalysis.*
+import io.disassemble.javanalysis.info
+import io.disassemble.javanalysis.pool
 import javassist.CtMethod
 
 /**

@@ -1,7 +1,9 @@
 package io.disassemble.javanalysis.util
 
-import io.disassemble.javanalysis.*
+import io.disassemble.javanalysis.code
+import io.disassemble.javanalysis.index
 import io.disassemble.javanalysis.insn.*
+import io.disassemble.javanalysis.pool
 import javassist.CtMethod
 import javassist.bytecode.BadBytecode
 import javassist.bytecode.Opcode.*

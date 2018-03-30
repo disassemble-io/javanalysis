@@ -38,7 +38,7 @@ public class Sample {
     }
 
     public static void tableswitch() {
-        switch((int) u) {
+        switch ((int) u) {
             case 1: {
                 System.out.println("A");
                 break;

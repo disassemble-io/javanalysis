@@ -10,35 +10,40 @@ import javassist.bytecode.CodeAttribute
 import javassist.bytecode.ConstPool
 import javassist.bytecode.MethodInfo
 import javassist.bytecode.analysis.ControlFlow
+import java.util.*
 
 /**
  * @author Tyler Sedlar
  * @since 5/19/2017
  */
 
-object CtMethodExtension {
-    internal val codeMap: MutableMap<CtMethod, List<CtInsn>> = HashMap()
-    internal val indexMap: MutableMap<CtMethod, HashMap<Int, Int>> = HashMap()
-}
+
+val codeMap: MutableMap<Int, List<CtInsn>> = HashMap()
+val indexMap: MutableMap<Int, HashMap<Int, Int>> = HashMap()
+
+val CtMethod.hash: Int
+    get() {
+        return System.identityHashCode(this)
+    }
 
 val CtMethod.instructions: List<CtInsn>
     get() {
-        return if (CtMethodExtension.codeMap.containsKey(this)) {
-            CtMethodExtension.codeMap[this]!!
+        return if (hash in codeMap) {
+            codeMap[hash]!!
         } else {
             val parsed = CodeParser.parse(this)
-            CtMethodExtension.codeMap[this] = parsed
+            codeMap[hash] = parsed
             parsed
         }
     }
 
 val CtMethod.indices: HashMap<Int, Int>
     get() {
-        return if (CtMethodExtension.indexMap.containsKey(this)) {
-            CtMethodExtension.indexMap[this]!!
+        return if (hash in indexMap) {
+            indexMap[hash]!!
         } else {
             val map = HashMap<Int, Int>()
-            CtMethodExtension.indexMap[this] = map
+            indexMap[hash] = map
             map
         }
     }
@@ -91,7 +96,7 @@ fun CtMethod.normalizeIndex(index: Int): Int {
         indices[index]
     } else {
         indices[index - 1]
-    } ?: index
+    } ?: error("Unable to normalize index: $index")
 }
 
 fun CtMethod.hasIndex(index: Int): Boolean {

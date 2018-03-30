@@ -1,6 +1,8 @@
 package io.disassemble.javanalysis.insn
 
-import io.disassemble.javanalysis.*
+import io.disassemble.javanalysis.indexOf
+import io.disassemble.javanalysis.info
+import io.disassemble.javanalysis.line
 import javassist.CtMethod
 import javassist.bytecode.Mnemonic
 import java.util.concurrent.atomic.AtomicReference
@@ -9,52 +11,26 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
-open class CtInsn(
-        protected val owner: CtMethod,
-        protected var index: Int,
-        protected var opcode: Int
-) {
+open class CtInsn(val owner: CtMethod, val index: Int, val opcode: Int) {
 
     val previous = AtomicReference<CtInsn>()
     val next = AtomicReference<CtInsn>()
 
-    fun owner(): CtMethod {
-        return owner
-    }
+    val opname: String
+        get() = Mnemonic.OPCODE[opcode]
 
-    fun index(): Int {
-        return index
-    }
+    val line: Int
+        get() = owner.info.getLineNumber(index)
 
-    fun opcode(): Int {
-        return opcode
-    }
+    val relativeLine: Int
+        get() = line - owner.line
 
-    fun opname(): String {
-        return Mnemonic.OPCODE[opcode]
-    }
+    val position: Int
+        get() = owner.indexOf(this)
 
-    fun line(): Int {
-        return owner.info.getLineNumber(index)
-    }
+    fun hasPrevious(): Boolean = previous.get() != null
 
-    fun relativeLine(): Int {
-        return line() - owner.line
-    }
+    operator fun hasNext(): Boolean = next.get() != null
 
-    fun position(): Int {
-        return owner.indexOf(this)
-    }
-
-    fun hasPrevious(): Boolean {
-        return previous.get() != null
-    }
-
-    operator fun hasNext(): Boolean {
-        return next.get() != null
-    }
-
-    override fun toString(): String {
-        return opname()
-    }
+    override fun toString(): String = opname
 }
