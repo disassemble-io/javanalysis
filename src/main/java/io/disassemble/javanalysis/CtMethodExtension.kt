@@ -64,6 +64,20 @@ val CtMethod.pool: ConstPool
 val CtMethod.line: Int
     get() = instructions[0].line() - 1
 
+val CtMethod.cfg: ControlFlowGraph
+    get() {
+        try {
+            val flow = ControlFlow(this.owner, this.info)
+            val blocks = flow.basicBlocks().map { FlowBlock(this, it) }
+            val cfg = ControlFlowGraph(flow, blocks)
+            blocks.forEach { block -> block.init(cfg) }
+            return cfg
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw IllegalStateException("Invalid bytecode for cfg in $longName")
+        }
+    }
+
 fun CtMethod.index(insnIndex: Int, position: Int) {
     indices[insnIndex] = position
 }
@@ -82,17 +96,4 @@ fun CtMethod.normalizeIndex(index: Int): Int {
 
 fun CtMethod.hasIndex(index: Int): Boolean {
     return indices.containsKey(index)
-}
-
-fun CtMethod.cfg(): ControlFlowGraph {
-    try {
-        val flow = ControlFlow(this.owner, this.info)
-        val blocks = flow.basicBlocks().map { FlowBlock(this, it) }
-        val cfg = ControlFlowGraph(flow, blocks)
-        blocks.forEach { block -> block.init(cfg) }
-        return cfg
-    } catch (e: Exception) {
-        e.printStackTrace()
-        throw IllegalStateException("Invalid bytecode for cfg in $longName")
-    }
 }
