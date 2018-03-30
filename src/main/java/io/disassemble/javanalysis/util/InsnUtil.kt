@@ -124,7 +124,7 @@ object InsnUtil {
                         ", indices = " + Arrays.toString(insn.indices())
             }
         }
-        var output = insn.opname()
+        var output = insn.opname
         if (!label.isEmpty()) {
             output += " ($label: $data)"
         }

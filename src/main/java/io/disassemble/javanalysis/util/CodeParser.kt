@@ -140,7 +140,7 @@ object CodeParser {
                     insn.previous.set(previous)
                 }
                 previous = insn
-                method.index(insn.index(), instructions.size)
+                method.index(insn.index, instructions.size)
                 instructions.add(insn)
             }
             return instructions

@@ -67,7 +67,7 @@ val CtMethod.pool: ConstPool
     get() = info.constPool
 
 val CtMethod.line: Int
-    get() = instructions[0].line() - 1
+    get() = instructions[0].line - 1
 
 val CtMethod.cfg: ControlFlowGraph
     get() {
@@ -88,7 +88,7 @@ fun CtMethod.index(insnIndex: Int, position: Int) {
 }
 
 fun CtMethod.indexOf(insn: CtInsn): Int {
-    return normalizeIndex(insn.index())
+    return normalizeIndex(insn.index)
 }
 
 fun CtMethod.normalizeIndex(index: Int): Int {
