@@ -12,18 +12,12 @@ class LdcInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var poolIndex: Int
+        val poolIndex: Int
 ) : CtInsn(owner, index, opcode) {
 
-    fun poolIndex(): Int {
-        return poolIndex
-    }
+    val tag: Int
+        get() = owner.info.constPool.getTag(poolIndex)
 
-    fun tag(): Int {
-        return owner.info.constPool.getTag(poolIndex())
-    }
-
-    fun cst(): Any {
-        return owner.pool.getLdcValue(poolIndex())
-    }
+    val cst: Any
+        get() = owner.pool.getLdcValue(poolIndex)
 }

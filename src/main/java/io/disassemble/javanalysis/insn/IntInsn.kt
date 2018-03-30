@@ -10,16 +10,5 @@ class IntInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        operand: Int
-) : CtInsn(owner, index, opcode) {
-
-    protected var operand = -1
-
-    init {
-        this.operand = operand
-    }
-
-    fun operand(): Int {
-        return operand
-    }
-}
+        val operand: Int
+) : CtInsn(owner, index, opcode)

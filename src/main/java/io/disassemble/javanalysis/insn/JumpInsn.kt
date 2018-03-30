@@ -10,10 +10,5 @@ class JumpInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var target: Int
-) : CtInsn(owner, index, opcode) {
-
-    fun target(): Int {
-        return target
-    }
-}
+        val target: Int
+) : CtInsn(owner, index, opcode)

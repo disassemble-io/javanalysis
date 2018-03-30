@@ -10,24 +10,11 @@ open class ClassMemberInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var parent: String,
-        protected var name: String,
-        protected var desc: String
+        val parent: String,
+        val name: String,
+        val desc: String
 ) : CtInsn(owner, index, opcode) {
 
-    fun parent(): String {
-        return parent
-    }
-
-    fun name(): String {
-        return name
-    }
-
-    fun desc(): String {
-        return desc
-    }
-
-    open fun key(): String {
-        return "$parent.$name$desc"
-    }
+    open val key: String
+        get() = "$parent.$name$desc"
 }

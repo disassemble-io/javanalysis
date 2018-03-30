@@ -10,10 +10,5 @@ open class TypeInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var type: String
-) : CtInsn(owner, index, opcode) {
-
-    fun type(): String {
-        return type
-    }
-}
+        val type: String
+) : CtInsn(owner, index, opcode)

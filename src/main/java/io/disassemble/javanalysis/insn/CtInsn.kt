@@ -3,6 +3,7 @@ package io.disassemble.javanalysis.insn
 import io.disassemble.javanalysis.indexOf
 import io.disassemble.javanalysis.info
 import io.disassemble.javanalysis.line
+import io.disassemble.javanalysis.util.InsnUtil
 import javassist.CtMethod
 import javassist.bytecode.Mnemonic
 import java.util.concurrent.atomic.AtomicReference
@@ -27,6 +28,9 @@ open class CtInsn(val owner: CtMethod, val index: Int, val opcode: Int) {
 
     val position: Int
         get() = owner.indexOf(this)
+
+    val CtInsn.verbose: String
+        get() = InsnUtil.stringify(this)
 
     fun hasPrevious(): Boolean = previous.get() != null
 

@@ -15,7 +15,6 @@ class FieldInsn(
         desc: String
 ) : ClassMemberInsn(owner, index, opcode, parent, name, desc) {
 
-    override fun key(): String {
-        return "$parent.$name"
-    }
+    override val key: String
+        get() = "$parent.$name"
 }

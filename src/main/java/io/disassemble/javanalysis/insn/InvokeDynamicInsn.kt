@@ -10,20 +10,7 @@ class InvokeDynamicInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var name: String,
-        protected var type: String,
-        protected var bootstrap: Int
-) : CtInsn(owner, index, opcode) {
-
-    fun name(): String {
-        return name
-    }
-
-    fun type(): String {
-        return type
-    }
-
-    fun bootstrap(): Int {
-        return bootstrap
-    }
-}
+        val nameAndType: Int,
+        val type: String,
+        val bootstrap: Int
+) : CtInsn(owner, index, opcode)

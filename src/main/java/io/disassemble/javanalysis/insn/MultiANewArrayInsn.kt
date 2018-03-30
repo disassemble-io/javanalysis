@@ -11,10 +11,5 @@ class MultiANewArrayInsn(
         index: Int,
         opcode: Int,
         type: String,
-        protected var dimensions: Int
-) : TypeInsn(owner, index, opcode, type) {
-
-    fun dimensions(): Int {
-        return dimensions
-    }
-}
+        val dimensions: Int
+) : TypeInsn(owner, index, opcode, type)

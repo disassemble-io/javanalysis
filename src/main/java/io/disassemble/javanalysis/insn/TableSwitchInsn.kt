@@ -10,25 +10,8 @@ class TableSwitchInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var low: Int,
-        protected var high: Int,
-        protected var defaultIndex: Int,
-        protected var indices: IntArray
-) : CtInsn(owner, index, opcode) {
-
-    fun low(): Int {
-        return low
-    }
-
-    fun high(): Int {
-        return high
-    }
-
-    fun defaultIndex(): Int {
-        return defaultIndex
-    }
-
-    fun indices(): IntArray {
-        return indices
-    }
-}
+        val low: Int,
+        val high: Int,
+        val defaultIndex: Int,
+        val indices: IntArray
+) : CtInsn(owner, index, opcode)

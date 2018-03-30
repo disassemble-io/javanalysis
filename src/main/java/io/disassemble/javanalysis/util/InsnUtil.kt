@@ -91,37 +91,37 @@ object InsnUtil {
         when (insn) {
             is LdcInsn -> {
                 label = "cst"
-                data = insn.cst()
+                data = insn.cst
             }
             is IntInsn -> {
                 label = "operand"
-                data = insn.operand()
+                data = insn.operand
             }
             is VarInsn -> {
                 label = "var"
-                data = insn.variable()
+                data = insn.variable
             }
             is JumpInsn -> {
                 label = "target"
-                data = insn.target()
+                data = insn.target
             }
             is ClassMemberInsn -> {
                 label = if (insn is FieldInsn) "field" else "method"
-                data = insn.key()
+                data = insn.key
             }
             is TypeInsn -> {
                 label = "type"
-                data = insn.type()
+                data = insn.type
             }
             is TableSwitchInsn -> {
                 label = "data"
-                data = "low = " + insn.low() + ", high = " + insn.high() + ", defaultIndex = " +
-                        insn.defaultIndex() + ", indices = " + Arrays.toString(insn.indices())
+                data = "low = " + insn.low + ", high = " + insn.high + ", defaultIndex = " +
+                        insn.defaultIndex + ", indices = " + Arrays.toString(insn.indices)
             }
             is LookupSwitchInsn -> {
                 label = "data"
-                data = "defaultIndex = " + insn.defaultIndex() + ", keys = " + Arrays.toString(insn.keys()) +
-                        ", indices = " + Arrays.toString(insn.indices())
+                data = "defaultIndex = " + insn.defaultIndex + ", keys = " + Arrays.toString(insn.keys) +
+                        ", indices = " + Arrays.toString(insn.indices)
             }
         }
         var output = insn.opname

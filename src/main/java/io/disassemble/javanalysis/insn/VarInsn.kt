@@ -10,10 +10,5 @@ class VarInsn(
         owner: CtMethod,
         index: Int,
         opcode: Int,
-        protected var variable: Int
-) : CtInsn(owner, index, opcode) {
-
-    fun variable(): Int {
-        return variable
-    }
-}
+        val variable: Int
+) : CtInsn(owner, index, opcode)

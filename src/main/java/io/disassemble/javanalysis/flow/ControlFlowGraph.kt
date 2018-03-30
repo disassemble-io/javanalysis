@@ -2,33 +2,19 @@ package io.disassemble.javanalysis.flow
 
 import javassist.bytecode.analysis.ControlFlow
 
-import java.util.*
-
 /**
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
-class ControlFlowGraph(val flow: ControlFlow, val blocks: List<FlowBlock>) {
+class ControlFlowGraph(val flow: ControlFlow, val blocks: Array<ControlFlow.Block>) {
 
-    val dominatorTree: Collection<FlowNode>
-        get() {
-            val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
-            for (node in flow.dominatorTree()) {
-                nodes[node] = FlowNode(this, node, nodes)
-            }
-            return nodes.values
-        }
+    val dominatorTree: Array<ControlFlow.Node>?
+        get() = flow.dominatorTree()
 
-    val postDominatorTree: Collection<FlowNode>
-        get() {
-            val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
-            for (node in flow.postDominatorTree()) {
-                nodes[node] = FlowNode(this, node, nodes)
-            }
-            return nodes.values
-        }
+    val postDominatorTree: Array<ControlFlow.Node>?
+        get() = flow.postDominatorTree()
 
-    fun findBlockByIndex(index: Int): FlowBlock? {
+    fun findBlockByIndex(index: Int): ControlFlow.Block ? {
         return blocks.firstOrNull { it.startIndex == index }
     }
 }
