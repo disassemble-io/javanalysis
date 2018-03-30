@@ -1,13 +1,13 @@
 package io.disassemble.javanalysis.insn
 
-import io.disassemble.javanalysis.CtMethodNode
+import javassist.CtMethod
 
 /**
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
 class IntInsn(
-        owner: CtMethodNode,
+        owner: CtMethod,
         index: Int,
         opcode: Int,
         operand: Int

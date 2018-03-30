@@ -8,33 +8,27 @@ import java.util.*
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
-class ControlFlowGraph(private val flow: ControlFlow, private val blocks: List<FlowBlock>) {
+class ControlFlowGraph(val flow: ControlFlow, val blocks: List<FlowBlock>) {
 
-    fun flow(): ControlFlow {
-        return flow
-    }
-
-    fun blocks(): List<FlowBlock> {
-        return blocks
-    }
-
-    fun dominatorTree(): Collection<FlowNode> {
-        val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
-        for (node in flow.dominatorTree()) {
-            nodes[node] = FlowNode(this, node, nodes)
+    val dominatorTree: Collection<FlowNode>
+        get() {
+            val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
+            for (node in flow.dominatorTree()) {
+                nodes[node] = FlowNode(this, node, nodes)
+            }
+            return nodes.values
         }
-        return nodes.values
-    }
 
-    fun postDominatorTree(): Collection<FlowNode> {
-        val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
-        for (node in flow.postDominatorTree()) {
-            nodes[node] = FlowNode(this, node, nodes)
+    val postDominatorTree: Collection<FlowNode>
+        get() {
+            val nodes = LinkedHashMap<ControlFlow.Node, FlowNode>()
+            for (node in flow.postDominatorTree()) {
+                nodes[node] = FlowNode(this, node, nodes)
+            }
+            return nodes.values
         }
-        return nodes.values
-    }
 
     fun findBlockByIndex(index: Int): FlowBlock? {
-        return blocks.firstOrNull { it.startIndex() == index }
+        return blocks.firstOrNull { it.startIndex == index }
     }
 }

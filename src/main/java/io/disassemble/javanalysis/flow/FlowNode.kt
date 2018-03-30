@@ -8,24 +8,16 @@ import javassist.bytecode.analysis.ControlFlow
  */
 class FlowNode(
         private val cfg: ControlFlowGraph,
-        private val source: ControlFlow.Node,
+        val source: ControlFlow.Node,
         private val mapping: Map<ControlFlow.Node, FlowNode>
 ) {
 
-    fun source(): ControlFlow.Node {
-        return source
-    }
+    val parent: FlowNode?
+        get() = mapping[source.parent()]
 
-    fun parent(): FlowNode? {
-        return mapping[source.parent()]
-    }
+    val block: FlowBlock?
+        get() = FlowBlock.translate(cfg, source.block())
 
-    fun block(): FlowBlock? {
-        return FlowBlock.translate(cfg, source.block())
-    }
-
-    fun children(): List<FlowNode?> {
-        return (0 until source.children())
-                .map { mapping[source.child(it)] }
-    }
+    val children: List<FlowNode?>
+        get() = (0 until source.children()).map { mapping[source.child(it)] }
 }

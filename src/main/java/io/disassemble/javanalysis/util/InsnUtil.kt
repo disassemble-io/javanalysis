@@ -99,7 +99,7 @@ object InsnUtil {
             }
             is VarInsn -> {
                 label = "var"
-                data = insn.`var`()
+                data = insn.variable()
             }
             is JumpInsn -> {
                 label = "target"

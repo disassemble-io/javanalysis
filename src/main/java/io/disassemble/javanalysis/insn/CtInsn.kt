@@ -1,8 +1,8 @@
 package io.disassemble.javanalysis.insn
 
-import io.disassemble.javanalysis.CtMethodNode
+import io.disassemble.javanalysis.*
+import javassist.CtMethod
 import javassist.bytecode.Mnemonic
-
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @since 5/20/2017
  */
 open class CtInsn(
-        protected val owner: CtMethodNode,
+        protected val owner: CtMethod,
         protected var index: Int,
         protected var opcode: Int
 ) {
@@ -18,7 +18,7 @@ open class CtInsn(
     val previous = AtomicReference<CtInsn>()
     val next = AtomicReference<CtInsn>()
 
-    fun owner(): CtMethodNode {
+    fun owner(): CtMethod {
         return owner
     }
 
@@ -35,11 +35,11 @@ open class CtInsn(
     }
 
     fun line(): Int {
-        return owner.info().getLineNumber(index)
+        return owner.info.getLineNumber(index)
     }
 
     fun relativeLine(): Int {
-        return line() - owner.line()
+        return line() - owner.line
     }
 
     fun position(): Int {

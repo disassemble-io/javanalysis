@@ -46,7 +46,7 @@ object CtClassScanner {
         try {
             FileInputStream(path).use { input -> scanInputStream(input, predicate, consumer) }
         } catch (e: IOException) {
-            println("File was not found: " + path)
+            println("File was not found: $path")
         }
 
     }

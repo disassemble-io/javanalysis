@@ -1,13 +1,13 @@
 package io.disassemble.javanalysis.insn
 
-import io.disassemble.javanalysis.CtMethodNode
+import javassist.CtMethod
 
 /**
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
 open class ClassMemberInsn(
-        owner: CtMethodNode,
+        owner: CtMethod,
         index: Int,
         opcode: Int,
         protected var parent: String,
@@ -28,6 +28,6 @@ open class ClassMemberInsn(
     }
 
     open fun key(): String {
-        return parent + "." + name + desc
+        return "$parent.$name$desc"
     }
 }
