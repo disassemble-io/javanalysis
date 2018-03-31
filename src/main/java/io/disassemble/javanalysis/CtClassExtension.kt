@@ -49,3 +49,12 @@ val CtClass.inits: List<CtMethod>
             list
         }
     }
+
+val CtClass.allMethods: List<CtMethod>
+    get() {
+        val list: MutableList<CtMethod> = ArrayList()
+        staticInitializer?.let { list.add(it) }
+        list.addAll(inits)
+        list.addAll(methods)
+        return list
+    }
