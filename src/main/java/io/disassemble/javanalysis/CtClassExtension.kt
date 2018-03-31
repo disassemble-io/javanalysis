@@ -58,3 +58,12 @@ val CtClass.allMethods: List<CtMethod>
         list.addAll(methods)
         return list
     }
+
+val CtClass.allDeclaredMethods: List<CtMethod>
+    get() {
+        val list: MutableList<CtMethod> = ArrayList()
+        staticInitializer?.let { list.add(it) }
+        list.addAll(inits)
+        list.addAll(declaredMethods)
+        return list
+    }
