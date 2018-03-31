@@ -13,6 +13,7 @@ import java.util.HashMap
  */
 
 private val clinitMap: MutableMap<Int, CtMethod> = HashMap()
+private val constructorMap: MutableMap<Int, List<CtMethod>> = HashMap()
 
 val CtClass.hash: Int
     get() {
@@ -33,4 +34,18 @@ val CtClass.staticInitializer: CtMethod?
             }
         }
         return null
+    }
+
+val CtClass.inits: List<CtMethod>
+    get() {
+        return if (hash in constructorMap) {
+            constructorMap[hash]!!
+        } else {
+            val list: MutableList<CtMethod> = ArrayList()
+            this.constructors.forEach {
+                list.add(CtMethod.make(it.methodInfo, this))
+            }
+            constructorMap[hash] = list
+            list
+        }
     }
