@@ -1,22 +1,12 @@
 package io.disassemble.javanalysis.util
 
+import io.disassemble.javanalysis.code
 import io.disassemble.javanalysis.insn.*
 import javassist.CtMethod
-import javassist.bytecode.*
-import com.sun.org.apache.bcel.internal.generic.RET
-import com.sun.org.apache.bcel.internal.generic.IINC
-import com.sun.org.apache.bcel.internal.generic.ASTORE
-import com.sun.org.apache.bcel.internal.generic.DSTORE
-import com.sun.org.apache.bcel.internal.generic.FSTORE
-import com.sun.org.apache.bcel.internal.generic.LSTORE
-import com.sun.org.apache.bcel.internal.generic.ISTORE
-import com.sun.org.apache.bcel.internal.generic.ALOAD
-import com.sun.org.apache.bcel.internal.generic.DLOAD
-import com.sun.org.apache.bcel.internal.generic.FLOAD
-import com.sun.org.apache.bcel.internal.generic.LLOAD
-import com.sun.org.apache.bcel.internal.generic.ILOAD
+import javassist.bytecode.BadBytecode
 import javassist.bytecode.CodeIterator
-
+import javassist.bytecode.Mnemonic
+import javassist.bytecode.Opcode
 
 
 /**
@@ -35,9 +25,11 @@ object CodeParser : Opcode {
     fun parse(method: CtMethod): List<CtInsn> {
         val insns: MutableList<CtInsn> = ArrayList()
         val info = method.methodInfo2
-        val pool = info.constPool
-        val code = info.codeAttribute ?: return insns
-        val iterator = code.iterator()
+        info.codeAttribute ?: return insns // early return if no code attribute
+
+        val iterator = method.code.iterator()
+
+        var prevInsn: CtInsn? = null
         while (iterator.hasNext()) {
             val pos: Int
             try {
@@ -45,7 +37,13 @@ object CodeParser : Opcode {
             } catch (e: BadBytecode) {
                 throw RuntimeException(e)
             }
-            insns.add(parse(method, iterator, pos, pool))
+            val insn = parse(method, iterator, pos)
+            if (prevInsn != null) {
+                prevInsn.next = insn
+                insn.previous = prevInsn
+            }
+            prevInsn = insn
+            insns.add(insn)
         }
         return insns
     }
@@ -54,176 +52,66 @@ object CodeParser : Opcode {
      * Gets a string representation of the bytecode instruction at the specified
      * position.
      */
-    fun parse(method: CtMethod, iter: CodeIterator, pos: Int, pool: ConstPool): CtInsn {
+    fun parse(method: CtMethod, iter: CodeIterator, pos: Int): CtInsn {
         val opcode = iter.byteAt(pos)
 
-        if (opcode > opcodes.size || opcode < 0)
-            throw IllegalArgumentException("Invalid opcode, opcode: $opcode pos: $pos")
+        require(!(opcode > opcodes.size || opcode < 0)) { "Invalid opcode, opcode: $opcode pos: $pos" }
 
         when (opcode) {
-            Opcode.BIPUSH -> {
-                return IntInsn(method, pos, opcode, iter.byteAt(pos + 1))
+            Opcode.BIPUSH, Opcode.SIPUSH -> {
+                return IntInsn(method, pos)
             }
-            Opcode.SIPUSH -> {
-                return IntInsn(method, pos, opcode, iter.s16bitAt(pos + 1))
+            Opcode.LDC, Opcode.LDC_W, Opcode.LDC2_W -> {
+                return LdcInsn(method, pos)
             }
-            Opcode.LDC -> {
-                return LdcInsn(method, pos, opcode, iter.byteAt(pos + 1))
-            }
-            Opcode.LDC_W, Opcode.LDC2_W -> {
-                return LdcInsn(method, pos, opcode, iter.u16bitAt(pos + 1))
-            }
-            Opcode.ILOAD, Opcode.LLOAD, Opcode.FLOAD, Opcode.DLOAD, Opcode.ALOAD,
-            Opcode.ISTORE, Opcode.LSTORE, Opcode.FSTORE, Opcode.DSTORE, Opcode.ASTORE -> {
-                return VarInsn(method, pos, opcode, iter.byteAt(pos + 1))
+            Opcode.ILOAD, Opcode.ILOAD_0, Opcode.ILOAD_1, Opcode.ILOAD_2, Opcode.ILOAD_3,
+            Opcode.LLOAD, Opcode.LLOAD_0, Opcode.LLOAD_1, Opcode.LLOAD_2, Opcode.LLOAD_3,
+            Opcode.FLOAD, Opcode.FLOAD_0, Opcode.FLOAD_1, Opcode.FLOAD_2, Opcode.FLOAD_3,
+            Opcode.DLOAD, Opcode.DLOAD_0, Opcode.DLOAD_1, Opcode.DLOAD_2, Opcode.DLOAD_3,
+            Opcode.ALOAD, Opcode.ALOAD_0, Opcode.ALOAD_1, Opcode.ALOAD_2, Opcode.ALOAD_3,
+            Opcode.ISTORE, Opcode.ISTORE_0, Opcode.ISTORE_1, Opcode.ISTORE_2, Opcode.ISTORE_3,
+            Opcode.LSTORE, Opcode.LSTORE_0, Opcode.LSTORE_1, Opcode.LSTORE_2, Opcode.LSTORE_3,
+            Opcode.FSTORE, Opcode.FSTORE_0, Opcode.FSTORE_1, Opcode.FSTORE_2, Opcode.FSTORE_3,
+            Opcode.DSTORE, Opcode.DSTORE_0, Opcode.DSTORE_1, Opcode.DSTORE_2, Opcode.DSTORE_3,
+            Opcode.ASTORE, Opcode.ASTORE_0, Opcode.ASTORE_1, Opcode.ASTORE_2, Opcode.ASTORE_3 -> {
+                return VarInsn(method, pos)
             }
             Opcode.IFEQ, Opcode.IFGE, Opcode.IFGT, Opcode.IFLE, Opcode.IFLT, Opcode.IFNE,
             Opcode.IFNONNULL, Opcode.IFNULL, Opcode.IF_ACMPEQ, Opcode.IF_ACMPNE, Opcode.IF_ICMPEQ,
-            Opcode.IF_ICMPGE, Opcode.IF_ICMPGT, Opcode.IF_ICMPLE, Opcode.IF_ICMPLT, Opcode.IF_ICMPNE -> {
-                return JumpInsn(method, pos, opcode, (iter.s16bitAt(pos + 1) + pos))
+            Opcode.IF_ICMPGE, Opcode.IF_ICMPGT, Opcode.IF_ICMPLE, Opcode.IF_ICMPLT, Opcode.IF_ICMPNE,
+            Opcode.GOTO, Opcode.JSR, Opcode.RET, Opcode.GOTO_W, Opcode.JSR_W -> {
+                return JumpInsn(method, pos)
             }
             Opcode.IINC -> {
-                return IncrementInsn(method, pos, opcode, iter.byteAt(pos + 1),
-                        iter.signedByteAt(pos + 2))
-            }
-            Opcode.GOTO, Opcode.JSR -> {
-                return JumpInsn(method, pos, opcode, iter.s16bitAt(pos + 1) + pos)
-            }
-            Opcode.RET -> {
-                return JumpInsn(method, pos, opcode, iter.byteAt(pos + 1))
+                return IncrementInsn(method, pos)
             }
             Opcode.TABLESWITCH -> {
-                return tableSwitch(method, opcode, iter, pos)
+                return TableSwitchInsn(method, pos)
             }
             Opcode.LOOKUPSWITCH -> {
-                return lookupSwitch(method, opcode, iter, pos)
+                return LookupSwitchInsn(method, pos)
             }
             Opcode.GETSTATIC, Opcode.PUTSTATIC, Opcode.GETFIELD, Opcode.PUTFIELD -> {
-                return fieldInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
+                return FieldInsn(method, pos)
             }
-            Opcode.INVOKEVIRTUAL, Opcode.INVOKESPECIAL, Opcode.INVOKESTATIC -> {
-                return methodInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
-            }
-            Opcode.INVOKEINTERFACE -> {
-                return interfaceMethodInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
+            Opcode.INVOKEVIRTUAL, Opcode.INVOKESPECIAL, Opcode.INVOKESTATIC, Opcode.INVOKEINTERFACE -> {
+                return MethodInsn(method, pos)
             }
             Opcode.INVOKEDYNAMIC -> {
-                val poolIndex = iter.u16bitAt(pos + 1)
-                val type = pool.getInvokeDynamicType(poolIndex)
-                val nameAndType = pool.getInvokeDynamicNameAndType(poolIndex)
-                val bootstrap = pool.getInvokeDynamicBootstrap(poolIndex)
-                return InvokeDynamicInsn(method, pos, opcode, nameAndType, type, bootstrap)
+                return InvokeDynamicInsn(method, pos)
             }
-            Opcode.NEW -> {
-                return classInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
-            }
-            Opcode.NEWARRAY -> {
-                return TypeInsn(method, pos, opcode, arrayInfo(iter.byteAt(pos + 1)))
-            }
-            Opcode.ANEWARRAY, Opcode.CHECKCAST -> {
-                return classInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
-            }
-            Opcode.WIDE -> {
-                return wide(method, pos, opcode, iter)
+            Opcode.NEW, Opcode.NEWARRAY, Opcode.ANEWARRAY, Opcode.CHECKCAST -> {
+                return TypeInsn(method, pos)
             }
             Opcode.MULTIANEWARRAY -> {
-                return classInfo(method, pos, opcode, pool, iter.u16bitAt(pos + 1))
+                return MultiANewArrayInsn(method, pos)
             }
-            Opcode.GOTO_W, Opcode.JSR_W -> {
-                return JumpInsn(method, pos, opcode, iter.s32bitAt(pos + 1) + pos)
+            Opcode.WIDE -> {
+                return WideInsn(method, pos)
             }
             else -> {
-                return CtInsn(method, pos, opcode)
+                return CtInsn(method, pos)
             }
         }
-    }
-
-    private fun arrayInfo(type: Int): String {
-        return when (type) {
-            Opcode.T_BOOLEAN -> "boolean"
-            Opcode.T_CHAR -> "char"
-            Opcode.T_BYTE -> "byte"
-            Opcode.T_SHORT -> "short"
-            Opcode.T_INT -> "int"
-            Opcode.T_LONG -> "long"
-            Opcode.T_FLOAT -> "float"
-            Opcode.T_DOUBLE -> "double"
-            else -> throw RuntimeException("Invalid array type")
-        }
-    }
-
-    private fun wide(method: CtMethod, pos: Int, opcode: Int, iter: CodeIterator): CtInsn {
-        val wideOpcode = iter.byteAt(pos + 1)
-        val index = iter.u16bitAt(pos + 2)
-        return WideInsn(method, pos, opcode, wideOpcode, index)
-    }
-
-
-    private fun classInfo(method: CtMethod, pos: Int, opcode: Int, pool: ConstPool, index: Int): TypeInsn {
-        return TypeInsn(method, pos, opcode, pool.getClassInfo(index))
-    }
-
-    private fun interfaceMethodInfo(method: CtMethod, pos: Int, opcode: Int, pool: ConstPool, index: Int): MethodInsn {
-        return MethodInsn(method, pos, opcode, pool.getInterfaceMethodrefClassName(index),
-                pool.getInterfaceMethodrefName(index), pool.getInterfaceMethodrefType(index))
-    }
-
-    private fun methodInfo(method: CtMethod, pos: Int, opcode: Int, pool: ConstPool, index: Int): MethodInsn {
-        return MethodInsn(method, pos, opcode, pool.getMethodrefClassName(index),
-                pool.getMethodrefName(index), pool.getMethodrefType(index))
-    }
-
-    private fun fieldInfo(method: CtMethod, pos: Int, opcode: Int, pool: ConstPool, index: Int): FieldInsn {
-        return FieldInsn(method, pos, opcode, pool.getFieldrefClassName(index),
-                pool.getFieldrefName(index), pool.getFieldrefType(index))
-    }
-
-    private fun lookupSwitch(method: CtMethod, opcode: Int, iter: CodeIterator, pos: Int): LookupSwitchInsn {
-        var index = (pos and 3.inv()) + 4
-        val defaultIndex = pos + iter.s32bitAt(index)
-
-        val npairs = iter.s32bitAt(index + 4)
-        index += 4
-
-        val end = npairs * 8 + (index + 4)
-        index += 4
-
-        val keys: MutableList<Int> = ArrayList()
-        val indices: MutableList<Int> = ArrayList()
-
-        while (index < end) {
-            keys.add(iter.s32bitAt(index))
-            indices.add(iter.s32bitAt(index + 4) + pos)
-            index += 8
-        }
-
-        return LookupSwitchInsn(method, pos, opcode, defaultIndex, keys.toIntArray(), indices.toIntArray())
-    }
-
-    private fun tableSwitch(method: CtMethod, opcode: Int, iter: CodeIterator, pos: Int): TableSwitchInsn {
-        var index = (pos and 3.inv()) + 4
-        val defaultIndex = pos + iter.s32bitAt(index)
-
-        val low = iter.s32bitAt(index + 4)
-        index += 4
-
-        val high = iter.s32bitAt(index + 4)
-        index += 4
-
-        val end = (high - low + 1) * 4 + (index + 4)
-        index += 4
-
-
-        val indices: MutableList<Int> = ArrayList()
-
-        // Offset table
-        var key = low
-        while (index < end) {
-            indices.add(iter.s32bitAt(index) + pos)
-            index += 4
-            key++
-        }
-
-        return TableSwitchInsn(method, pos, opcode, low, high, defaultIndex, indices.toIntArray())
     }
 }

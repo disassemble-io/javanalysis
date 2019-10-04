@@ -22,6 +22,12 @@ import kotlin.collections.ArrayList
 private val codeMap: MutableMap<Int, List<CtInsn>> = HashMap()
 private val indexMap: MutableMap<Int, HashMap<Int, Int>> = HashMap()
 
+fun CtMethod.unload() {
+    val hash = hash
+    codeMap.remove(hash)
+    indexMap.remove(hash)
+}
+
 val CtMethod.hash: Int
     get() {
         return System.identityHashCode(this)
@@ -103,11 +109,11 @@ fun CtMethod.hasIndex(index: Int): Boolean {
 }
 
 private fun visitRecursive(visited: MutableSet<Int>, node: ControlFlow.Node, callback: (block: ControlFlow.Block) -> Unit) {
-    node.block().let {
-        val idx = it.index()
+    node.block().let { block ->
+        val idx = block.index()
         if (idx !in visited) {
             visited.add(idx)
-            callback(it)
+            callback(block)
             node.childBlocks.forEach { visitRecursive(visited, it, callback) }
         }
     }
@@ -118,8 +124,8 @@ val CtMethod.flatPDT: MutableList<CtInsn>
         val blocks: MutableList<ControlFlow.Block> = ArrayList()
         val visited: MutableSet<Int> = HashSet()
 
-        this.cfg.postDominatorTree?.forEach {
-            visitRecursive(visited, it, { blocks.add(it) })
+        this.cfg.postDominatorTree.forEach { node ->
+            visitRecursive(visited, node) { blocks.add(it) }
         }
 
         return blocks.flatMap { it.stripInsns(this) }.toMutableList()
@@ -130,8 +136,8 @@ val CtMethod.flatDT: MutableList<CtInsn>
         val blocks: MutableList<ControlFlow.Block> = ArrayList()
         val visited: MutableSet<Int> = HashSet()
 
-        this.cfg.dominatorTree?.forEach {
-            visitRecursive(visited, it, { blocks.add(it) })
+        this.cfg.dominatorTree.forEach { node ->
+            visitRecursive(visited, node) { blocks.add(it) }
         }
 
         return blocks.flatMap { it.stripInsns(this) }.toMutableList()

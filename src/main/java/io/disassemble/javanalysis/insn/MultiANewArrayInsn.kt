@@ -8,8 +8,16 @@ import javassist.CtMethod
  */
 class MultiANewArrayInsn(
         owner: CtMethod,
-        index: Int,
-        opcode: Int,
-        type: String,
-        val dimensions: Int
-) : TypeInsn(owner, index, opcode, type)
+        index: Int
+) : TypeInsn(owner, index) {
+
+    val dimensions: Int
+        get() {
+            var dim = 0
+            val desc = type
+            while (desc[dim] == '[') {
+                ++dim
+            }
+            return dim
+        }
+}

@@ -1,5 +1,6 @@
 package io.disassemble.javanalysis.insn
 
+import io.disassemble.javanalysis.code
 import javassist.CtMethod
 
 /**
@@ -8,8 +9,18 @@ import javassist.CtMethod
  */
 class IncrementInsn(
         owner: CtMethod,
-        index: Int,
-        opcode: Int,
-        val variable: Int,
-        val increment: Int
-) : CtInsn(owner, index, opcode)
+        index: Int
+) : CtInsn(owner, index) {
+
+    var variable
+        get() = owner.code.iterator().byteAt(index + 1)
+        set(value) {
+            owner.code.iterator().writeByte(value, index + 1)
+        }
+
+    var increment
+        get() = owner.code.iterator().signedByteAt(index + 2)
+        set(value) {
+            owner.code.iterator().writeByte(value, index + 2)
+        }
+}

@@ -8,10 +8,10 @@ import javassist.bytecode.analysis.ControlFlow
  */
 class ControlFlowGraph(val flow: ControlFlow, val blocks: Array<ControlFlow.Block>) {
 
-    val dominatorTree: Array<ControlFlow.Node>?
+    val dominatorTree: Array<ControlFlow.Node>
         get() = flow.dominatorTree()
 
-    val postDominatorTree: Array<ControlFlow.Node>?
+    val postDominatorTree: Array<ControlFlow.Node>
         get() = flow.postDominatorTree()
 
     fun findBlockByIndex(index: Int): ControlFlow.Block ? {

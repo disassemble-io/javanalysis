@@ -3,7 +3,15 @@ package io.disassemble.javanalysis
 import javassist.CtClass
 import javassist.CtConstructor
 import javassist.CtMethod
-import java.util.HashMap
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.addAll
+import kotlin.collections.contains
+import kotlin.collections.forEach
+import kotlin.collections.set
 
 /**
  * @author Tyler Sedlar

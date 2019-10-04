@@ -2,7 +2,6 @@ package io.disassemble.javanalysis.util
 
 import io.disassemble.javanalysis.insn.*
 import javassist.bytecode.Opcode.*
-import java.util.*
 
 /**
  * @author Tyler Sedlar
@@ -116,16 +115,20 @@ object InsnUtil {
             is TableSwitchInsn -> {
                 label = "data"
                 data = "low = " + insn.low + ", high = " + insn.high + ", defaultIndex = " +
-                        insn.defaultIndex + ", indices = " + Arrays.toString(insn.indices)
+                        insn.defaultIndex + ", indices = " + insn.indices.contentToString()
             }
             is LookupSwitchInsn -> {
                 label = "data"
-                data = "defaultIndex = " + insn.defaultIndex + ", keys = " + Arrays.toString(insn.keys) +
-                        ", indices = " + Arrays.toString(insn.indices)
+                data = "defaultIndex = " + insn.defaultIndex + ", keys = " + insn.keys.contentToString() +
+                        ", indices = " + insn.indices.contentToString()
+            }
+            is IncrementInsn -> {
+                label = "data"
+                data = "var = " + insn.variable + ", incr = " + insn.increment
             }
         }
         var output = insn.opname
-        if (!label.isEmpty()) {
+        if (label.isNotEmpty()) {
             output += " ($label: $data)"
         }
         return output

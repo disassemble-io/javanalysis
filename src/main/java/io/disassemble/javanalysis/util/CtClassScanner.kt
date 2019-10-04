@@ -18,7 +18,7 @@ import java.util.jar.JarFile
  */
 object CtClassScanner {
 
-    fun scanClassPath(predicate: Predicate<CtClass>, consumer: Consumer<CtMethod>) {
+    fun scanClassPath(predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         val list = System.getProperty("java.class.path")
         for (path in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
             val file = File(path)
@@ -30,7 +30,7 @@ object CtClassScanner {
         }
     }
 
-    fun scanDirectory(directory: File, predicate: Predicate<CtClass>, consumer: Consumer<CtMethod>) {
+    fun scanDirectory(directory: File, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         for (entry in directory.list()!!) {
             val path = "${directory.path}${File.separator}$entry"
             val file = File(path)
@@ -42,39 +42,59 @@ object CtClassScanner {
         }
     }
 
-    fun scanClassFile(path: String, predicate: Predicate<CtClass>, consumer: Consumer<CtMethod>) {
+    fun scanDirectory(directory: File): Map<String, CtClass> {
+        val classes = HashMap<String, CtClass>()
+        val consumer = Consumer<CtMethod> { method ->
+            val declared = method.declaringClass
+            classes[declared.name] = declared
+        }
+        scanDirectory(directory, null, consumer)
+        return classes
+    }
+
+    fun scanClassFile(path: String, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         try {
             FileInputStream(path).use { input -> scanInputStream(input, predicate, consumer) }
         } catch (e: IOException) {
             println("File was not found: $path")
         }
-
     }
 
-    fun scanInputStream(inputStream: InputStream, predicate: Predicate<CtClass>, consumer: Consumer<CtMethod>) {
+    fun scanClassFile(path: String): CtClass? {
+        var ctc: CtClass? = null
+        val predicate = Predicate<CtClass> {
+            ctc = it
+            true
+        }
+        scanClassFile(path, predicate, null)
+        return ctc
+    }
+
+    fun scanInputStream(inputStream: InputStream, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         try {
             val pool = ClassPool()
             pool.appendSystemPath()
             val node = pool.makeClass(inputStream)
-            if (!predicate.test(node)) {
+            if (predicate != null && !predicate.test(node)) {
                 return
             }
-            for (method in node.declaredMethods) {
-                consumer.accept(method)
+            if (consumer != null) {
+                for (method in node.declaredMethods) {
+                    consumer.accept(method)
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 
     fun scanJar(file: File): Map<String, CtClass> {
         val classes = HashMap<String, CtClass>()
-        val predicate = Predicate<CtClass>({ true })
-        val consumer = Consumer<CtMethod>({ me ->
-            val declared = me.declaringClass
+        val predicate = Predicate<CtClass> { true }
+        val consumer = Consumer<CtMethod> { method ->
+            val declared = method.declaringClass
             classes[declared.name] = declared
-        })
+        }
         try {
             JarFile(file).use { jar ->
                 val entries = jar.entries()

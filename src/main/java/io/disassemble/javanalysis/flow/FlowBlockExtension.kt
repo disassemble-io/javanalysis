@@ -11,7 +11,7 @@ import javassist.bytecode.analysis.ControlFlow
  */
 
 fun ControlFlow.Block.stripInsns(owner: CtMethod): List<CtInsn> {
-    return owner.instructions.filter { it.index >= this.startIndex && it.index <= this.endIndex }
+    return owner.instructions.filter { it.index >= this.startIndex && it.index < this.endIndex }
 }
 
 val ControlFlow.Block.startIndex: Int

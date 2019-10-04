@@ -88,3 +88,5 @@ target/
 
 # Project specifics
 src/test/excluded-java/*
+src/test/java/OldSchool.kt
+gamepack.jar
