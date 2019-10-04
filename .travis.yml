@@ -1,5 +1,5 @@
 language: java
 jdk:
   - oraclejdk9
-install: mvn install -Dmaven.javadoc.skip=false -DskipTests=true --batch-mode --show-version
+install: mvn clean install -Dmaven.javadoc.skip=false --batch-mode --show-version
 script: mvn test javadoc:jar --batch-mode
