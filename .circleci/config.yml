@@ -53,6 +53,7 @@ jobs:
             npm config set unsafe-perm true
             git clone git@github.com:disassemble-io/disassemble-io.github.io.git
             cd disassemble-io.github.io
+            git checkout -b gh-pages
             rm -rf ./docs/javanalysis
             mkdir -p ./docs/javanalysis/
             cp -avr ~/repo/target/site/docs/javanalysis ./docs/javanalysis
