@@ -51,7 +51,7 @@ jobs:
           command: |
             git clone git@github.com:disassemble-io/disassemble-io.github.io.git
             cd disassemble-io.github.io
-            git push --delete origin docs-javanalysis
+            git push --delete origin docs-javanalysis &>/dev/null || true
             git checkout -b docs-javanalysis
             rm -rf ./docs/javanalysis
             mkdir -p ./docs/javanalysis/
