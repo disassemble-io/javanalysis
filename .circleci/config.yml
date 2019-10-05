@@ -47,13 +47,12 @@ jobs:
 
       # upload docs
       - run:
-          name: Uploading docs to gh-pages branch
-          # unsafe-perm needed because no uid/gid found by npm
+          name: Uploading docs to docs-javanalysis branch
           command: |
-            npm config set unsafe-perm true
             git clone git@github.com:disassemble-io/disassemble-io.github.io.git
             cd disassemble-io.github.io
-            git checkout -b gh-pages
+            git push --delete origin docs-javanalysis
+            git checkout -b docs-javanalysis
             rm -rf ./docs/javanalysis
             mkdir -p ./docs/javanalysis/
             cp -avr ~/repo/target/site/docs/javanalysis ./docs/javanalysis
@@ -61,4 +60,4 @@ jobs:
             git config user.name "Tyler Sedlar"
             git add .
             git commit --allow-empty -am "Update documentation for Javanalysis"
-            git push -u origin gh-pages
+            git push -u origin docs-javanalysis
