@@ -13,11 +13,19 @@ import java.util.function.Predicate
 import java.util.jar.JarFile
 
 /**
+ * A utility class used for parsing a class structure into a [CtClass] structure.
+ *
  * @author Tyler Sedlar
  * @since 5/19/2017
  */
 object CtClassScanner {
 
+    /**
+     * Scans the class path for matching [CtClass].
+     *
+     * @param predicate A filter for which [CtClass] should have the given [Consumer] ran on it.
+     * @param consumer The consumer to run on each of the [CtMethod] within the matching [CtClass].
+     */
     fun scanClassPath(predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         val list = System.getProperty("java.class.path")
         for (path in list.split(File.pathSeparator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
@@ -30,6 +38,13 @@ object CtClassScanner {
         }
     }
 
+    /**
+     * Scans the given directory for matching [CtClass].
+     *
+     * @param directory The [File] directory to look within.
+     * @param predicate A filter for which [CtClass] should have the given [Consumer] ran on it.
+     * @param consumer The consumer to run on each of the [CtMethod] within the matching [CtClass].
+     */
     fun scanDirectory(directory: File, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         for (entry in directory.list()!!) {
             val path = "${directory.path}${File.separator}$entry"
@@ -42,6 +57,13 @@ object CtClassScanner {
         }
     }
 
+    /**
+     * Scans the given directory for matching [CtClass], putting it within a map.
+     * The map key matches [CtClass.getName]
+     *
+     * @param directory The [File] directory to look within.
+     * @return A map of [CtClass] within the [File] directory, where the key is [CtClass.getName].
+     **/
     fun scanDirectory(directory: File): Map<String, CtClass> {
         val classes = HashMap<String, CtClass>()
         val consumer = Consumer<CtMethod> { method ->
@@ -52,6 +74,13 @@ object CtClassScanner {
         return classes
     }
 
+    /**
+     * Applies the given [Predicate] and [Consumer] against the class file.
+     *
+     * @param path The path of the .class file to act upon.
+     * @param predicate A filter for which [CtClass] should have the given [Consumer] ran on it.
+     * @param consumer The consumer to run on each of the [CtMethod] within the matching [CtClass].
+     */
     fun scanClassFile(path: String, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         try {
             FileInputStream(path).use { input -> scanInputStream(input, predicate, consumer) }
@@ -60,6 +89,13 @@ object CtClassScanner {
         }
     }
 
+    /**
+     * Reads the given .class file path into a [CtClass] object.
+     *
+     * @param path The path of the .class file to read.
+     *
+     * @return A [CtClass] read from the given .class file.
+     */
     fun scanClassFile(path: String): CtClass? {
         var ctc: CtClass? = null
         val predicate = Predicate<CtClass> {
@@ -70,6 +106,13 @@ object CtClassScanner {
         return ctc
     }
 
+    /**
+     * Reads the [InputStream] into a [CtClass] object.
+     *
+     * @param inputStream An [InputStream] representing a .class file.
+     * @param predicate A filter for which [CtClass] should have the given [Consumer] ran on it.
+     * @param consumer The consumer to run on each of the [CtMethod] within the matching [CtClass].
+     */
     fun scanInputStream(inputStream: InputStream, predicate: Predicate<CtClass>?, consumer: Consumer<CtMethod>?) {
         try {
             val pool = ClassPool()
@@ -88,6 +131,13 @@ object CtClassScanner {
         }
     }
 
+    /**
+     * Reads the given jar [File] path into a [Map] of [CtClass], where the key is [CtClass.getName].
+     *
+     * @param file The path of the .jar file to read.
+     *
+     * @return A [Map] of [CtClass], where the key is [CtClass.getName].
+     */
     fun scanJar(file: File): Map<String, CtClass> {
         val classes = HashMap<String, CtClass>()
         val predicate = Predicate<CtClass> { true }

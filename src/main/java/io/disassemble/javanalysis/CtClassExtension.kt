@@ -14,20 +14,33 @@ import kotlin.collections.forEach
 import kotlin.collections.set
 
 /**
+ * A class to add extension methods to CtClass
+ *
  * @author Tyler Sedlar
  * @since 5/19/2017
- *
- * A class to add extension methods to CtClass
  */
 
+/**
+ * A map of method [CtClass.staticInitializer], where the key is [CtClass.hash].
+ */
 private val clinitMap: MutableMap<Int, CtMethod> = HashMap()
+
+/**
+ * A map of [CtClass.getConstructors], where the key is [CtClass.hash].
+ */
 private val constructorMap: MutableMap<Int, List<CtMethod>> = HashMap()
 
+/**
+ * Gets a unique hash for this class.
+ */
 val CtClass.hash: Int
     get() {
         return System.identityHashCode(this)
     }
 
+/**
+ * Gets a list of <clinit> for this [CtClass].
+ */
 val CtClass.staticInitializer: CtMethod?
     get() {
         if (hash in clinitMap) {
@@ -44,6 +57,9 @@ val CtClass.staticInitializer: CtMethod?
         return null
     }
 
+/**
+ * Gets a list of constructors for this [CtClass].
+ */
 val CtClass.inits: List<CtMethod>
     get() {
         return if (hash in constructorMap) {
@@ -58,6 +74,9 @@ val CtClass.inits: List<CtMethod>
         }
     }
 
+/**
+ * Gets all of the [CtMethod] within this [CtClass].
+ */
 val CtClass.allMethods: List<CtMethod>
     get() {
         val list: MutableList<CtMethod> = ArrayList()
@@ -67,6 +86,9 @@ val CtClass.allMethods: List<CtMethod>
         return list
     }
 
+/**
+ * Gets all declared [CtMethod] within this [CtClass].
+ */
 val CtClass.allDeclaredMethods: List<CtMethod>
     get() {
         val list: MutableList<CtMethod> = ArrayList()

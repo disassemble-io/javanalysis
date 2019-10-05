@@ -6,6 +6,11 @@ import java.io.FileOutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 
+/**
+ * Writes the [CtClass] [Map] out to a jar [File].
+ *
+ * @param outFile The jar [File] to write to.
+ */
 fun Map<String, CtClass>.write(outFile: File) {
     JarOutputStream(FileOutputStream(outFile)).use { jar ->
         this.forEach { (className, classEntry) ->

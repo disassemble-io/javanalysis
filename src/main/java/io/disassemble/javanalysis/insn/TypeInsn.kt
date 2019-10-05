@@ -9,6 +9,13 @@ import javassist.bytecode.Opcode
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
+
+/**
+ * A class representing a typed instruction.
+ *
+ * @param owner The [CtMethod] that this instruction is a part of.
+ * @param index The index of this instruction in [CtMethod].
+ */
 open class TypeInsn(
         owner: CtMethod,
         index: Int
@@ -20,6 +27,9 @@ open class TypeInsn(
         owner.code.iterator().u16bitAt(index + 1)
     }
 
+    /**
+     * The type of this [TypeInsn].
+     */
     var type: String
         get() {
             return if (opcode == Opcode.NEWARRAY) {
@@ -38,6 +48,13 @@ open class TypeInsn(
             }
         }
 
+    /**
+     * Converts a type tag to its associated string.
+     *
+     * @param type The type tag to convert.
+     *
+     * @return The [String] representation of the given tag.
+     */
     private fun idx2type(type: Int): String {
         return when (type) {
             Opcode.T_BOOLEAN -> "boolean"
@@ -52,6 +69,13 @@ open class TypeInsn(
         }
     }
 
+    /**
+     * Converts [String] type tag to its opcode counterpart.
+     *
+     * @param type The [String] type tag to convert.
+     *
+     * @return The opcode representation of the given tag.
+     */
     private fun type2idx(type: String): Int {
         return when (type) {
             "boolean" -> Opcode.T_BOOLEAN

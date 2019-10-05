@@ -10,7 +10,7 @@ import javassist.bytecode.Opcode
 
 
 /**
- * Simple utility class for parsing the bytecode instructions of a method.
+ * A simple utility class for parsing the bytecode instructions of a method.
  *
  * @author Tyler Sedlar
  * @since 3/30/2018
@@ -20,7 +20,11 @@ object CodeParser : Opcode {
     private val opcodes = Mnemonic.OPCODE
 
     /**
-     * Parses the bytecode instructions of a given method.
+     * Parses the bytecode instructions of the given [CtMethod].
+     *
+     * @param method The [CtMethod] to parse.
+     *
+     * @return A list of [CtInsn] contained within the given [CtMethod].
      */
     fun parse(method: CtMethod): List<CtInsn> {
         val insns: MutableList<CtInsn> = ArrayList()
@@ -51,6 +55,12 @@ object CodeParser : Opcode {
     /**
      * Gets a string representation of the bytecode instruction at the specified
      * position.
+     *
+     * @param method The [CtMethod] to parse from.
+     * @param iter The [CtMethod]'s [CodeIterator].
+     * @param pos The position of the [CtInsn] to parse.
+     *
+     * @return The [CtInsn] at the given position.
      */
     fun parse(method: CtMethod, iter: CodeIterator, pos: Int): CtInsn {
         val opcode = iter.byteAt(pos)

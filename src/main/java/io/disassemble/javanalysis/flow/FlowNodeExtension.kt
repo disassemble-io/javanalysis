@@ -7,6 +7,9 @@ import javassist.bytecode.analysis.ControlFlow
  * @since 3/30/2018
  */
 
+/**
+ * Gets the child blocks that belong to this [ControlFlow.Node].
+ */
 val ControlFlow.Node.childBlocks: List<ControlFlow.Node>
     get() {
         val childList: MutableList<ControlFlow.Node> = ArrayList()

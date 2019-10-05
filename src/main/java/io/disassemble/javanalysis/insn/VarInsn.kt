@@ -9,11 +9,21 @@ import javassist.bytecode.Opcode
  * @author Tyler Sedlar
  * @since 5/20/2017
  */
+
+/**
+ * A class representing a local variable instruction.
+ *
+ * @param owner The [CtMethod] that this instruction is a part of.
+ * @param index The index of this instruction in [CtMethod].
+ */
 class VarInsn(
         owner: CtMethod,
         index: Int
 ) : CtInsn(owner, index) {
 
+    /**
+     * The variable on the stack.
+     */
     var variable: Int
         get() {
             return when (opcode) {
@@ -58,6 +68,13 @@ class VarInsn(
 
     companion object {
 
+        /**
+         * Normalizes this instruction by changing iload_1 to iload, etc.
+         *
+         * @param iter The [CodeIterator] to change [CtInsn] within.
+         * @param index The index of the [CtInsn] to change.
+         * @param op The opcode to be normalized.
+         */
         fun normalize(iter: CodeIterator, index: Int, op: Int) {
             when (op) {
                 Opcode.ILOAD_0, Opcode.ILOAD_1, Opcode.ILOAD_2, Opcode.ILOAD_3 -> {
@@ -107,6 +124,12 @@ class VarInsn(
             iter.insert(index + 1, byteArrayOf(value))
         }
 
+        /**
+         * Changes the variable value within its underscored class. (iload_0->iload_1, iload_0->iload_2, etc.)
+         *
+         * @param insn The [VarInsn] to be changed.
+         * @param value The value to be changed to.
+         */
         private fun changeVal(insn: VarInsn, value: Int) {
             when (insn.opcode) {
                 Opcode.ILOAD_0, Opcode.ILOAD_1, Opcode.ILOAD_2, Opcode.ILOAD_3 -> {
