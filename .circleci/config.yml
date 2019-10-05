@@ -42,8 +42,8 @@ jobs:
 
       # add public fingerprint
       - add_ssh_keys:
-          - fingeprints:
-              - "97:7f:cc:4b:2d:2c:fd:d3:de:3e:97:a6:91:d1:7b:49"
+          fingeprints:
+            - "97:7f:cc:4b:2d:2c:fd:d3:de:3e:97:a6:91:d1:7b:49"
 
       # upload docs
       - run:
