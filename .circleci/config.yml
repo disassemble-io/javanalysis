@@ -55,7 +55,7 @@ jobs:
             git checkout -b docs-javanalysis
             rm -rf ./docs/javanalysis
             mkdir -p ./docs/javanalysis/
-            cp -avr ~/repo/target/site/docs/javanalysis ./docs/javanalysis
+            cp -avr ~/repo/target/site/docs/javanalysis ./docs/
             git config user.email "sedlarizona@gmail.com"
             git config user.name "Tyler Sedlar"
             git add .
