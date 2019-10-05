@@ -4,7 +4,7 @@ import io.disassemble.javanalysis.code
 import io.disassemble.javanalysis.indexOf
 import io.disassemble.javanalysis.info
 import io.disassemble.javanalysis.line
-import io.disassemble.javanalysis.util.InsnUtil
+import io.disassemble.javanalysis.util.insn.InsnUtil
 import javassist.CtMethod
 import javassist.bytecode.Mnemonic
 

@@ -1,7 +1,7 @@
 package io.disassemble.javanalysis
 
 import io.disassemble.javanalysis.insn.CtInsn
-import io.disassemble.javanalysis.util.query.InsnQuery
+import io.disassemble.javanalysis.util.insn.query.InsnQuery
 
 /**
  * @author Tyler Sedlar
@@ -42,7 +42,7 @@ class InsnLine(val line: Int) {
      *
      * @return A map of matching [CtInsn], where the key is [InsnQuery.name].
      */
-    fun find(vararg queries: InsnQuery): Map<String, CtInsn> {
+    fun find(vararg queries: InsnQuery<out CtInsn>): Map<String, CtInsn> {
         val matches = HashMap<String, CtInsn>()
 
         var idx = 0
