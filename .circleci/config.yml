@@ -8,11 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+      - image: node:10.0.0
 
     working_directory: ~/repo
 
@@ -39,3 +35,13 @@ jobs:
 
       # run tests!
       - run: mvn clean install
+
+      # upload docs
+      - run:
+          name: Install dependencies
+          command: |
+            npm install -g --silent gh-pages@2.1.1
+            cd ~/repo/
+            git clone git@github.com:disassemble-io/disassemble-io.github.io.git
+            cd disassemble-io.github.io
+            ls ~/repo/
