@@ -60,5 +60,5 @@ jobs:
             git config user.email "sedlarizona@gmail.com"
             git config user.name "Tyler Sedlar"
             git add .
-            git commit -am "Update documentation for Javanalysis"
+            git commit --allow-empty -am "Update documentation for Javanalysis"
             git push -u origin gh-pages
