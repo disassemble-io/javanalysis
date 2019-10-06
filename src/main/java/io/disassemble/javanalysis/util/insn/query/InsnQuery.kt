@@ -81,6 +81,41 @@ open class InsnQuery<T> where T : CtInsn {
 
         return true
     }
+
+    /**
+     * Creates an array of the two [InsnQuery], being the [InsnQuery] called from, and the given value.
+     *
+     * @param query the [InsnQuery] to create an array with.
+     *
+     * @return An array of the two [InsnQuery], being the [InsnQuery] called from, and the given value.
+     */
+    operator fun plus(query: InsnQuery<out CtInsn>): Array<InsnQuery<out CtInsn>> {
+        return arrayOf(this, query)
+    }
+}
+
+/**
+ * Creates a typed array of the given instructions.
+ * This function exists because arrayOf(...) does not give <out CtInsn> for the InsnQuery type.
+ *
+ * @param queries The list of [InsnQuery] to give a type to.
+ *
+ * @return A typed array of the given instructions.
+ */
+fun queryList(vararg queries: InsnQuery<out CtInsn>): Array<InsnQuery<out CtInsn>> {
+    return queries.toList().toTypedArray()
+}
+
+/**
+ * Sets the distance for each of the [InsnQuery] in the array.
+ *
+ * @param dist The distance allowed to be traveled between queries within [io.disassemble.javanalysis.InsnLine.find].
+ *
+ * @return The [Array] that this method was called on.
+ */
+fun Array<InsnQuery<out CtInsn>>.distAll(dist: Int): Array<InsnQuery<out CtInsn>> {
+    this.forEach { it.dist = dist }
+    return this
 }
 
 /**
