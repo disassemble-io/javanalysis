@@ -71,7 +71,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <outputFormat>gfm</outputFormat>
+                    <outputFormat>jekyll</outputFormat>
                     <outputDir>target/site/docs</outputDir>
                 </configuration>
             </plugin>
