@@ -1,3 +1,10 @@
+/**
+ * A class to add extension methods to a list of instructions.
+ *
+ * @author Tyler Sedlar
+ * @since 5/19/2017
+ */
+
 package io.disassemble.javanalysis
 
 import io.disassemble.javanalysis.insn.CtInsn

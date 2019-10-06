@@ -1,3 +1,9 @@
+/**
+ * A class to add extension methods to CtMethod
+ *
+ * @author Tyler Sedlar
+ * @since 5/19/2017
+ */
 package io.disassemble.javanalysis
 
 import io.disassemble.javanalysis.flow.ControlFlowGraph
@@ -13,11 +19,6 @@ import javassist.bytecode.MethodInfo
 import javassist.bytecode.analysis.ControlFlow
 import java.util.*
 import kotlin.collections.ArrayList
-
-/**
- * @author Tyler Sedlar
- * @since 5/19/2017
- */
 
 private val codeMap: MutableMap<Int, List<CtInsn>> = HashMap()
 private val indexMap: MutableMap<Int, HashMap<Int, Int>> = HashMap()

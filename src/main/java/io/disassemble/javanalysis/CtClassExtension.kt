@@ -1,3 +1,9 @@
+/**
+ * A class to add extension methods to CtClass
+ *
+ * @author Tyler Sedlar
+ * @since 5/19/2017
+ */
 package io.disassemble.javanalysis
 
 import javassist.CtClass
@@ -12,13 +18,6 @@ import kotlin.collections.addAll
 import kotlin.collections.contains
 import kotlin.collections.forEach
 import kotlin.collections.set
-
-/**
- * A class to add extension methods to CtClass
- *
- * @author Tyler Sedlar
- * @since 5/19/2017
- */
 
 /**
  * A map of method [CtClass.staticInitializer], where the key is [CtClass.hash].

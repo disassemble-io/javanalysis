@@ -71,8 +71,20 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <outputFormat>jekyll</outputFormat>
+                    <outputFormat>html</outputFormat>
                     <outputDir>target/site/docs</outputDir>
+                    <includes>
+                        <include>packages.md</include>
+                    </includes>
+                    <externalDocumentationLinks>
+                        <link>
+                            <url>https://static.javadoc.io/org.javassist/javassist/3.26.0-GA/index.html</url>
+                            <packageListUrl>https://static.javadoc.io/org.javassist/javassist/3.26.0-GA/package-list</packageListUrl>
+                        </link>
+                        <link>
+                            <url>https://docs.oracle.com/javase/8/docs/api/</url>
+                        </link>
+                    </externalDocumentationLinks>
                 </configuration>
             </plugin>
         </plugins>
